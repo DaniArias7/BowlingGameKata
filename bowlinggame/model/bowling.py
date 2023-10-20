@@ -152,3 +152,6 @@ class Game:
             raise IndexError("There are not enough frames to calculate score")
 
         return sum(frame.score() for frame in self.frames)
+
+    def pins_left(self):
+        pass

@@ -1,4 +1,4 @@
-from tkinter import Tk, Frame, Label, Entry, messagebox
+from tkinter import Tk, Frame, Label, Entry, messagebox, filedialog
 from tkinter.constants import TOP, X, SOLID, W, LEFT, END
 from tkinter.ttk import Button
 from customtkinter import CTk
@@ -118,6 +118,9 @@ class BowlingApp(CTk):
                 self.game.roll(roll)
                 self.frames[self.game.current_frame_index].activate()
                 self.update_frames()
+                last_frame_index = 9 if self.game.current_frame_index >= 9 else self.game.current_frame_index
+                self.frames[last_frame_index].update_rolls(str(self.game.frames[last_frame_index]))
+                self.frames[last_frame_index].update_score(self.game.frames[last_frame_index].score())
         except ValueError:
             message = "Roll must be an integer value"
             messagebox.showwarning(title="Validation error", message=message, parent=self)
@@ -128,7 +131,27 @@ class BowlingApp(CTk):
             self.add_roll_entry.focus()
 
     def load_from_file(self):
-        pass
+        file_path = filedialog.askopenfilename(title="Select a file", filetypes=[("Text Files", "*.txt")])
+
+        if not file_path:
+            return  # El usuario canceló la selección de archivo
+
+        try:
+            with open(file_path, "r") as file:
+                content = file.read()
+                rolls = content.strip().split()
+                for roll in rolls:
+                    if roll == "X":
+                        self.game.roll(10)
+                    elif roll == "/":
+                        self.game.roll(self.game.pins_left())
+                    else:
+                        self.game.roll(int(roll))
+
+                # Actualizar la interfaz gráfica después de cargar los datos
+                self.update_frames()
+        except Exception as e:
+            messagebox.showerror(title="Error", message=f"Error al cargar el archivo: {str(e)}", parent=self)
 
     def update_frames(self):
         for i, frame in enumerate(self.game.frames):
