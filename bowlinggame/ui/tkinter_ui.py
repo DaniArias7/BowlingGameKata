@@ -106,7 +106,10 @@ class BowlingApp(CTk):
         self.unbind("<Visibility>")
 
     def reset(self):
-        pass
+        self.game.reset()
+        self.update_frames()
+        self.add_roll_entry.delete(0, 'end')
+        self.add_roll_entry.focus()
 
     def add_roll(self):
         try:
@@ -121,6 +124,7 @@ class BowlingApp(CTk):
                 last_frame_index = 9 if self.game.current_frame_index >= 9 else self.game.current_frame_index
                 self.frames[last_frame_index].update_rolls(str(self.game.frames[last_frame_index]))
                 self.frames[last_frame_index].update_score(self.game.frames[last_frame_index].score())
+
         except ValueError:
             message = "Roll must be an integer value"
             messagebox.showwarning(title="Validation error", message=message, parent=self)
@@ -134,7 +138,7 @@ class BowlingApp(CTk):
         file_path = filedialog.askopenfilename(title="Select a file", filetypes=[("Text Files", "*.txt")])
 
         if not file_path:
-            return  # El usuario canceló la selección de archivo
+            return
 
         try:
             with open(file_path, "r") as file:
@@ -148,7 +152,6 @@ class BowlingApp(CTk):
                     else:
                         self.game.roll(int(roll))
 
-                # Actualizar la interfaz gráfica después de cargar los datos
                 self.update_frames()
         except Exception as e:
             messagebox.showerror(title="Error", message=f"Error al cargar el archivo: {str(e)}", parent=self)
@@ -157,3 +160,4 @@ class BowlingApp(CTk):
         for i, frame in enumerate(self.game.frames):
             self.frames[i].update_rolls(str(frame))
             self.frames[i].update_score(frame.score())
+

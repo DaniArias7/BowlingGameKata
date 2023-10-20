@@ -154,4 +154,25 @@ class Game:
         return sum(frame.score() for frame in self.frames)
 
     def pins_left(self):
-        pass
+        last_frame = self.frames[Game.MAX_FRAMES - 1]
+
+        if isinstance(last_frame, TenthFrame):
+            if len(last_frame.rolls) < 2:
+                return 10
+            elif len(last_frame.rolls) == 2 and not (last_frame.is_strike() or last_frame.is_spare()):
+                return 10
+            elif len(last_frame.rolls) == 2 and (last_frame.is_strike() or last_frame.is_spare()):
+                return 10 - last_frame.rolls[2].pins
+        else:
+            return 10 - last_frame.total_pins
+
+        return 0
+
+    def reset(self):
+        for frame in self.frames:
+            frame.rolls = []
+            if isinstance(frame, TenthFrame):
+                frame.extra_roll = None
+        self.roll_count = 0
+
+
