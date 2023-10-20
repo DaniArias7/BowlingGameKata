@@ -162,5 +162,6 @@ class BowlingApp(CTk):
             self.frames[i].update_score(frame.score())
 
     def extra_roll(self):
+        pass
 
 
